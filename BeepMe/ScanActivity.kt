@@ -1,12 +1,23 @@
 package com.example.beepme
 
+import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.BackgroundColorSpan
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
+import android.text.style.UnderlineSpan
 import android.util.Log
+import android.view.View
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import org.w3c.dom.Document
@@ -38,7 +49,6 @@ class ScanActivity : AppCompatActivity() {
         barNum = findViewById(R.id.barNum) //바코드번호 textView
         saveAtMyInfo = findViewById(R.id.saveAtMyInfo) // Mylist에 저장하는 버튼
         myHelper = MyDBHelper(this) // 내부 클래스인 MyDBHelper 클래스의 객체
-
 
         //바코드 스캔했을 때 바코드 정보를 scan 페이지(현재 페이지)로 받아옴
         val barNumT = intent.getStringExtra("EXTRA_MESSAGE") ?: ""
@@ -177,12 +187,14 @@ class ScanActivity : AppCompatActivity() {
                 runOnUiThread {
                     // 쓰레드에서 얻은 데이터로 UI 업데이트
                     prdlstNm.text = prdlstNmT // 상품명
-                    allergy.text = allergyT // 알러지성분
                     nutrient.text = nutrientT // 영양성분
                     manufacture.text = manufactureT //제조사
 
                     //알아낸 상품 정보를 데이터베이스에 저장
                     saveToDB(barNum, prdlstNmT)
+
+                    // 알러지 체크
+                    checkAllergy(allergyT,allergy)
                 }
 
             } catch (e : Exception) {
@@ -236,4 +248,57 @@ class ScanActivity : AppCompatActivity() {
         sqlDB.close()
     }
 
+    //데이터베이스 관리
+    inner class AllergyDBHelper(context: Context) : SQLiteOpenHelper(context, "selected_items", null, 1) {
+
+        val TABLE_NAME = "selected_items"
+        val COLUMN_NAME = "item_name"
+
+        //데이터베이스가 처음 생성될 때 호출하는 메서드
+        override fun onCreate(db: SQLiteDatabase?) {
+            //테이블을 생성하는 SQL 쿼리 정의 및 실행
+            val createTableQuery = "CREATE TABLE $TABLE_NAME ($COLUMN_NAME TEXT)"
+            db?.execSQL(createTableQuery)
+        }
+
+        //데이터베이스의 버전이 변경될 때 호출하는 메서드
+        override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
+            // 데이터베이스 업데이트가 필요한 경우 여기서 처리 가능
+        }
+    }
+
+    // 데이터베이스의 정보로 ui 업데이트
+    private fun checkAllergy(prdAllergyText:String, prdAllergy: TextView) {
+        var allergyDBHelper = AllergyDBHelper(this)
+
+        sqlDB = allergyDBHelper.readableDatabase // 읽기 가능한 데이터베이스
+        // 나의 알레르기 성분이 있을 때만 부분적으로 표시하기 위해 span 형태의 string으로 생성
+        var prdAllergySpan = SpannableStringBuilder(prdAllergyText) 
+
+        // 데이터베이스에서 데이터를 검색해 cursor 객체에 반환
+        val cursor: Cursor
+        cursor = sqlDB.rawQuery("SELECT * FROM selected_items;", null)
+
+        // 나의 알레르기가 있고 제품에 알레르기 성분 정보가 있을 때
+        if (cursor.moveToFirst() && prdAllergyText !="") {
+            do {
+                var myAllergy = cursor.getString(0) // 나의 알레르기
+                var isMyAllergy = prdAllergyText.indexOf(myAllergy) // 나의 알레르기가 제품에 포함되는지 여부
+                var length = myAllergy.length // 알레르기 문자열 길이
+                if (isMyAllergy != -1){
+                    // 나의 알레르기가 포함되어 있다면 그 부분을 눈에 잘 들어오게 해당 문자 빨갛고 크고 밑줄 있게 설정
+                    val colorBlueSpan = ForegroundColorSpan(Color.argb(200,255,0,0))
+                    prdAllergySpan.setSpan(colorBlueSpan, isMyAllergy, isMyAllergy+length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    prdAllergySpan.setSpan(UnderlineSpan(), isMyAllergy, isMyAllergy+length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    prdAllergySpan.setSpan(RelativeSizeSpan(1.5f), isMyAllergy, isMyAllergy+length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                }
+            } while (cursor.moveToNext()) // 다음 행이 유효한 경우
+
+            // 알러지 성분 정보를 나타내는 textView의 텍스트로 생성한 span형태 string을 지정
+            prdAllergy.text = prdAllergySpan
+        }
+
+        cursor.close()
+        sqlDB.close()
+    }
 }
