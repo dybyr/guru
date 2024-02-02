@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="16dp"
+    android:paddingTop="16dp"
+    android:paddingRight="16dp"
+    android:paddingBottom="16dp"
+    tools:context=".MylistActivity">
+
+    <Button
+        android:id="@+id/mylist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="나의 리스트"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TableLayout
+        android:id="@+id/tableLayout"
+        android:layout_width="match_parent"
+        android:layout_height="534dp"
+        android:layout_above="@+id/resetButton"
+        android:layout_below="@+id/mylist"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="16dp"
+        android:stretchColumns="*">
+
+        <TableRow>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="상품명"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="알러지정보"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="제조사"
+                android:textSize="18sp" />
+        </TableRow>
+
+    </TableLayout>
+
+
+    <Button
+        android:id="@+id/resetButton"
+        android:layout_width="100dp"
+        android:layout_height="60dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="25dp"
+        android:text="Reset" />
+
+</RelativeLayout>
