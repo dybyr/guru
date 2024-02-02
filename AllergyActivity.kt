@@ -2,6 +2,7 @@ package com.example.beepme
 
 import android.content.ContentValues
 import android.content.Context
+import android.content.SharedPreferences
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.appcompat.app.AppCompatActivity
@@ -17,8 +18,7 @@ class AllergyActivity : AppCompatActivity() {
     lateinit var btndone: Button
     lateinit var btnchange : Button
     private lateinit var dbHelper: DBHelper
-    private val SELECTED_ITEMS_KEY = "selected_items_key"
-
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,12 +32,9 @@ class AllergyActivity : AppCompatActivity() {
         adapter = ArrayAdapter(this, android.R.layout.simple_list_item_multiple_choice, allergy)
         listView.adapter = adapter
         listView.choiceMode = ListView.CHOICE_MODE_MULTIPLE
+        sharedPreferences = getPreferences(Context.MODE_PRIVATE)
 
-        savedInstanceState?.getStringArray(SELECTED_ITEMS_KEY)?.let { selectedItems ->
-            for (i in 0 until listView.count) {
-                listView.setItemChecked(i, selectedItems.contains(listView.getItemAtPosition(i) as String))
-            }
-        }
+        restoreCheckboxStates()
 
 
         listView.setOnItemClickListener { _, _, position, _ ->
@@ -59,24 +56,24 @@ class AllergyActivity : AppCompatActivity() {
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        // Save the checked state before configuration changes
-        val selectedItems = mutableListOf<String>()
-        for (i in 0 until listView.count) {
-            if (listView.isItemChecked(i)) {
-                selectedItems.add(listView.getItemAtPosition(i) as String)
-            }
-        }
-        outState.putStringArray(SELECTED_ITEMS_KEY, selectedItems.toTypedArray())
-    }
-
-
-
     private fun handleItemSelection(position: Int) {
         // 주어진 위치(position)에 있는 항목의 선택 여부를 처리하는 함수
         val isSelected = listView.isItemChecked(position)
         // 주어진 위치의 항목이 현재 선택되었는지 확인
+        saveCheckboxState(position, isSelected)
+    }
+
+    private fun saveCheckboxState(position: Int, isChecked: Boolean) {
+        val editor = sharedPreferences.edit()
+        editor.putBoolean("checkbox_$position", isChecked)
+        editor.apply()
+    }
+
+    private fun restoreCheckboxStates() {
+        for (i in 0 until listView.count) {
+            val isChecked = sharedPreferences.getBoolean("checkbox_$i", false)
+            listView.setItemChecked(i, isChecked)
+        }
     }
 
     //데이터베이스에 선택된 알러지 항목을 저장하는 함수
