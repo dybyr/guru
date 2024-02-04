@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="gray">#808080</color> <!-- 회색 -->
+    <color name="yellow">#FFFF00</color> <!-- 노란색 -->
+    <color name="custom_gray">#808080</color> <!-- 사용자 정의 회색 -->
+    <color name="custom_yellow">#FFFF00</color> <!-- 사용자 정의 노란색 -->
+    <color name="holo_yellow">#FFFF00</color>
+    <color name="light_gray">#CCCCCC</color>
+
+</resources>
