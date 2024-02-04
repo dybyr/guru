@@ -21,7 +21,7 @@
 
     <TableLayout
         android:id="@+id/tableLayout"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="534dp"
         android:layout_above="@+id/resetButton"
         android:layout_below="@+id/mylist"
@@ -29,12 +29,13 @@
         android:layout_marginTop="16dp"
         android:stretchColumns="*">
 
-        <TableRow>     
+        <TableRow>
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:gravity="center"
                 android:text="상품명"
                 android:textSize="18sp" />
 
@@ -42,6 +43,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:gravity="center"
                 android:text="알러지정보"
                 android:textSize="18sp" />
 
@@ -49,22 +51,23 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:gravity="center"
                 android:text="제조사"
                 android:textSize="18sp" />
         </TableRow>
 
     </TableLayout>
 
+
     <Button
         android:id="@+id/resetButton"
         android:layout_width="100dp"
-        android:layout_height="75dp"
+        android:layout_height="60dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="25dp"
         android:text="Reset" />
 
 </RelativeLayout>
-
 
 
