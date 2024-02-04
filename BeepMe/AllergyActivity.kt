@@ -64,14 +64,21 @@ class AllergyActivity : AppCompatActivity() {
     }
 
     private fun saveCheckboxState(position: Int, isChecked: Boolean) {
+        //sharedPreferences에 데이터를 수정하기 위한 editor 객체를 얻어옴
         val editor = sharedPreferences.edit()
+        //"checkbox_$position" 키에 해당 위치의 체크 박스 상태를 저장
         editor.putBoolean("checkbox_$position", isChecked)
+        //변경된 데이터를 적용
         editor.apply()
     }
 
+    //저장된 sharedPreferences 데이터를 사용하여 리스트뷰의 체크박스 상태를 복원하는 함수
     private fun restoreCheckboxStates() {
+        //리스트뷰의 아이템 개수만큼 반복
         for (i in 0 until listView.count) {
+            //"checkbox_$i" 키로 저장된 값(체크박스 상태)을 불러와서 isChecked 변수에 할당
             val isChecked = sharedPreferences.getBoolean("checkbox_$i", false)
+            //리스트뷰의 i번째 아이템의 체크 상태를 저장된 값으로 설정
             listView.setItemChecked(i, isChecked)
         }
     }
