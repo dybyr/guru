@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.LinearLayout
 import android.widget.TableLayout
 import android.widget.TableRow
 import android.widget.TextView
@@ -58,6 +57,7 @@ class MylistActivity : AppCompatActivity() {
         val query = "SELECT * FROM savedTBL"
         val cursor = sqlDB.rawQuery(query, null)
 
+        // 제품명, 알러지 정보, 제조사를 불러옴
         while (cursor.moveToNext()) {
             val prdlstNmValue = cursor.getString(1)
             val allergyValue = cursor.getString(2)
@@ -107,18 +107,22 @@ class MylistActivity : AppCompatActivity() {
             prdlstNmTextView.text = item.first
             prdlstNmTextView.textSize = 16f
             prdlstNmTextView.gravity = Gravity.LEFT
+            // 줄이 길어질 때 화면에서 잘리지 않기 위해 layout_width를 0dp로 설정하여 layout_weight를 사용하고, 가로 폭을 1:1:1로 나눔
+            prdlstNmTextView.layoutParams = TableRow.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
             row.addView(prdlstNmTextView)
 
             val allergyTextView = TextView(this)
             allergyTextView.text = item.second
             allergyTextView.textSize = 16f
             allergyTextView.gravity = Gravity.LEFT
+            allergyTextView.layoutParams = TableRow.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
             row.addView(allergyTextView)
 
             val manufactureTextView = TextView(this)
             manufactureTextView.text = item.third
             manufactureTextView.textSize = 16f
             manufactureTextView.gravity = Gravity.LEFT
+            manufactureTextView.layoutParams = TableRow.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
             row.addView(manufactureTextView)
 
             tableLayout.addView(row, TableRow.LayoutParams(
